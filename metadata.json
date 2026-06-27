@@ -1,0 +1,6 @@
+{
+  "name": "Juventus Fan Club & Blog",
+  "description": "Sito web della Juventus con blog di articoli, statistiche dei giocatori, forum dei tifosi, storia, rosa attuale, palmarès e contatti.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

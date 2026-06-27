@@ -27,6 +27,7 @@ export default function BlogComponent() {
   const [newContent, setNewContent] = useState('');
   const [newAuthor, setNewAuthor] = useState('');
   const [newCategory, setNewCategory] = useState('Analisi Tattica');
+  const [newPassword, setNewPassword] = useState('');
   const [formError, setFormError] = useState('');
   const [showSuccessToast, setShowSuccessToast] = useState(false);
 
@@ -96,8 +97,13 @@ export default function BlogComponent() {
   // Create Article
   const handleCreateArticle = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newTitle.trim() || !newSummary.trim() || !newContent.trim() || !newAuthor.trim()) {
+    if (!newTitle.trim() || !newSummary.trim() || !newContent.trim() || !newAuthor.trim() || !newPassword.trim()) {
       setFormError('Compila tutti i campi prima di pubblicare.');
+      return;
+    }
+
+    if (newPassword !== 'Juventino84@-') {
+      setFormError('Password di pubblicazione errata.');
       return;
     }
 
@@ -130,6 +136,7 @@ export default function BlogComponent() {
     setNewContent('');
     setNewAuthor('');
     setNewCategory('Analisi Tattica');
+    setNewPassword('');
     setFormError('');
     setIsAddingArticle(false);
     
@@ -268,7 +275,7 @@ export default function BlogComponent() {
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                     <div>
                       <label className="block text-[10px] text-zinc-400 font-mono uppercase mb-2 font-bold">Firma / Nome Autore</label>
                       <input
@@ -277,6 +284,17 @@ export default function BlogComponent() {
                         placeholder="Es: Marco Bianconero..."
                         value={newAuthor}
                         onChange={(e) => setNewAuthor(e.target.value)}
+                        className="w-full bg-black border border-zinc-800 rounded-none px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-white text-xs uppercase tracking-wider"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] text-zinc-400 font-mono uppercase mb-2 font-bold">Password (Richiesta)</label>
+                      <input
+                        id="article-password-input"
+                        type="password"
+                        placeholder="Password di pubblicazione..."
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
                         className="w-full bg-black border border-zinc-800 rounded-none px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-white text-xs uppercase tracking-wider"
                       />
                     </div>
@@ -321,15 +339,9 @@ export default function BlogComponent() {
                   onClick={() => setSelectedArticle(article)}
                   className="bg-zinc-900 border border-zinc-800 rounded-none overflow-hidden group hover:border-white transition-all cursor-pointer flex flex-col h-full shadow-2xl"
                 >
-                  {/* Article Cover Image */}
-                  <div className="relative aspect-video bg-zinc-900 overflow-hidden border-b border-zinc-800">
-                    <img 
-                      src={article.image} 
-                      alt={article.title}
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300 mix-blend-luminosity"
-                    />
-                    <div className="absolute top-3 left-3 bg-black border border-zinc-850 text-white text-[9px] font-mono tracking-widest uppercase px-2.5 py-1 rounded-none font-bold">
+                  {/* Article Category Header */}
+                  <div className="bg-black border-b border-zinc-800 p-3 flex items-center">
+                    <div className="text-white text-[9px] font-mono tracking-widest uppercase font-bold">
                       {article.category}
                     </div>
                   </div>
@@ -425,15 +437,7 @@ export default function BlogComponent() {
               </div>
             </div>
 
-            {/* Article Image Banner */}
-            <div className="aspect-video bg-zinc-900 rounded-none overflow-hidden border border-zinc-800">
-              <img 
-                src={selectedArticle.image} 
-                alt={selectedArticle.title} 
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-cover mix-blend-luminosity"
-              />
-            </div>
+
 
             {/* Article Text Content */}
             <div className="prose prose-invert max-w-none text-zinc-300 leading-relaxed space-y-4 text-base md:text-lg">

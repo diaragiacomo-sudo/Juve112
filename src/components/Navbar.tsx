@@ -12,10 +12,14 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
 
   const navigation = [
     { id: 'home', label: 'Home & Blog' },
+    { id: 'delpiero', label: 'Del Piero' },
+    { id: 'stadi', label: 'Gli Stadi' },
+    { id: 'video', label: 'Video' },
+    { id: 'passione', label: 'Tua Passione' },
     { id: 'storia', label: 'Storia' },
-    { id: 'rosa', label: 'Rosa & Statistiche' },
+    { id: 'rosa', label: 'Rosa' },
     { id: 'palmares', label: 'Palmarès' },
-    { id: 'forum', label: 'Forum dei Tifosi' },
+    { id: 'forum', label: 'Forum' },
     { id: 'contatti', label: 'Contatti' },
   ];
 
@@ -28,12 +32,12 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-zinc-200 text-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between py-4 xl:py-0 xl:h-24 gap-4">
           
           {/* Logo & Brand */}
           <div 
             onClick={() => handleTabClick('home')} 
-            className="flex items-center space-x-3 cursor-pointer group select-none"
+            className="flex items-center space-x-3 cursor-pointer group select-none self-center xl:self-auto"
           >
             {/* Del Piero Image in Top Left - Circular Legend Badge */}
             <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-black bg-black flex-shrink-0 shadow-md flex items-center justify-center transition-transform group-hover:scale-105 duration-250" title="Alessandro Del Piero">
@@ -74,15 +78,15 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-1">
+          <nav className="hidden md:flex flex-wrap items-center justify-center gap-x-1 xl:gap-x-2 gap-y-1 max-w-4xl">
             {navigation.map((item) => (
               <button
                 key={item.id}
                 id={`nav-${item.id}`}
                 onClick={() => handleTabClick(item.id)}
-                className={`px-4 py-2 text-xs font-bold uppercase tracking-widest transition-all duration-200 relative ${
+                className={`px-3 py-2 text-[10px] xl:text-xs font-bold uppercase tracking-widest transition-all duration-200 relative ${
                   activeTab === item.id 
-                    ? 'text-black border-b-2 border-black' 
+                    ? 'text-black border-b-2 border-black font-extrabold' 
                     : 'text-zinc-500 hover:text-black hover:opacity-75'
                 }`}
               >
@@ -92,7 +96,7 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
           </nav>
 
           {/* Area Tifosi Button on Desktop */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden xl:flex items-center space-x-4">
             <div className="bg-black text-white px-5 py-2 text-xs font-bold uppercase cursor-pointer hover:bg-zinc-850 transition-colors">
               Area Tifosi
             </div>

@@ -6,6 +6,10 @@ import SquadComponent from './components/Squad';
 import PalmaresComponent from './components/Palmares';
 import ForumComponent from './components/Forum';
 import ContactsComponent from './components/Contacts';
+import DelPieroComponent from './components/DelPiero';
+import StadiComponent from './components/Stadi';
+import VideoComponent from './components/Video';
+import PassioneComponent from './components/Passione';
 import { motion, AnimatePresence } from 'motion/react';
 import { Star, Shield, Trophy, Heart } from 'lucide-react';
 
@@ -16,6 +20,14 @@ export default function App() {
     switch (activeTab) {
       case 'home':
         return <BlogComponent />;
+      case 'delpiero':
+        return <DelPieroComponent />;
+      case 'stadi':
+        return <StadiComponent />;
+      case 'video':
+        return <VideoComponent />;
+      case 'passione':
+        return <PassioneComponent />;
       case 'storia':
         return <HistoryComponent />;
       case 'rosa':

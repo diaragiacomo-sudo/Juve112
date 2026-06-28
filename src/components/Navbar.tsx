@@ -8,6 +8,7 @@ interface NavbarProps {
 
 export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [delPieroImgError, setDelPieroImgError] = useState(false);
 
   const navigation = [
     { id: 'home', label: 'Home & Blog' },
@@ -34,6 +35,25 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
             onClick={() => handleTabClick('home')} 
             className="flex items-center space-x-3 cursor-pointer group select-none"
           >
+            {/* Del Piero Image in Top Left - Circular Legend Badge */}
+            <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-black bg-black flex-shrink-0 shadow-md flex items-center justify-center transition-transform group-hover:scale-105 duration-250" title="Alessandro Del Piero">
+              {!delPieroImgError ? (
+                <img 
+                  src="https://upload.wikimedia.org/wikipedia/commons/2/23/Alessandro_Del_Piero_2008_Cannes.jpg" 
+                  alt="Alessandro Del Piero"
+                  className="w-full h-full object-cover object-[center_15%] scale-105"
+                  referrerPolicy="no-referrer"
+                  onError={() => setDelPieroImgError(true)}
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center text-white h-full w-full bg-black">
+                  <span className="font-display font-black text-[9px] tracking-tight leading-none text-yellow-500">ADP</span>
+                  <span className="font-display font-black text-sm leading-none tracking-tight">10</span>
+                </div>
+              )}
+              <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors"></div>
+            </div>
+
             <div className="relative flex items-center justify-center w-12 h-14 bg-black text-white font-display font-extrabold tracking-tighter text-2xl border border-zinc-950">
               <span className="relative z-10">J</span>
               {/* Bianconero stripes in the background */}

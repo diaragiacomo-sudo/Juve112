@@ -44,43 +44,70 @@ export default function App() {
       {/* Main Navigation */}
       <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      {/* Hero Banner Section */}
-      <div className="relative bg-black h-[280px] md:h-[400px] flex items-center justify-center overflow-hidden border-b border-zinc-900">
-        {/* Background decorative stripes representing Juventus classic kit */}
-        <div className="absolute inset-0 flex">
-          <div className="w-1/12 bg-[#000000] border-r border-zinc-900"></div>
-          <div className="w-1/12 bg-[#0c0c0c] border-r border-zinc-900"></div>
-          <div className="w-1/12 bg-[#000000] border-r border-zinc-900"></div>
-          <div className="w-1/12 bg-[#0c0c0c] border-r border-zinc-900"></div>
-          <div className="w-1/12 bg-[#000000] border-r border-zinc-900"></div>
-          <div className="w-1/12 bg-[#0c0c0c] border-r border-zinc-900"></div>
-          <div className="w-1/12 bg-[#000000] border-r border-zinc-900"></div>
-          <div className="w-1/12 bg-[#0c0c0c] border-r border-zinc-900"></div>
-          <div className="w-1/12 bg-[#000000] border-r border-zinc-900"></div>
-          <div className="w-1/12 bg-[#0c0c0c] border-r border-zinc-900"></div>
-          <div className="w-1/12 bg-[#000000] border-r border-zinc-900"></div>
-          <div className="w-1/12 bg-[#0c0c0c]"></div>
-        </div>
-
-        {/* Diagonal light effect */}
-        <div className="absolute inset-0 bg-gradient-to-tr from-black via-transparent to-black opacity-90"></div>
-        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black to-transparent"></div>
-
-        {/* Content Box */}
-        <div className="relative z-10 text-center px-4 max-w-4xl">
-          <div className="flex justify-center space-x-1 mb-3">
-            <Star className="w-5 h-5 text-white fill-white filter drop-shadow-[0_0_4px_rgba(255,255,255,0.3)]" />
-            <Star className="w-5 h-5 text-white fill-white filter drop-shadow-[0_0_4px_rgba(255,255,255,0.3)]" />
-            <Star className="w-5 h-5 text-white fill-white filter drop-shadow-[0_0_4px_rgba(255,255,255,0.3)]" />
+      {/* Hero Banner Section (Only on Home/Blog tab to focus and beautify the user landing) */}
+      {activeTab === 'home' && (
+        <div className="relative bg-black h-[350px] md:h-[420px] flex items-center justify-center overflow-hidden border-b border-zinc-900">
+          {/* Background decorative stripes representing Juventus classic kit */}
+          <div className="absolute inset-0 flex">
+            <div className="w-1/12 bg-[#000000] border-r border-zinc-900/40"></div>
+            <div className="w-1/12 bg-[#0c0c0c] border-r border-zinc-900/40"></div>
+            <div className="w-1/12 bg-[#000000] border-r border-zinc-900/40"></div>
+            <div className="w-1/12 bg-[#0c0c0c] border-r border-zinc-900/40"></div>
+            <div className="w-1/12 bg-[#000000] border-r border-zinc-900/40"></div>
+            <div className="w-1/12 bg-[#0c0c0c] border-r border-zinc-900/40"></div>
+            <div className="w-1/12 bg-[#000000] border-r border-zinc-900/40"></div>
+            <div className="w-1/12 bg-[#0c0c0c] border-r border-zinc-900/40"></div>
+            <div className="w-1/12 bg-[#000000] border-r border-zinc-900/40"></div>
+            <div className="w-1/12 bg-[#0c0c0c] border-r border-zinc-900/40"></div>
+            <div className="w-1/12 bg-[#000000] border-r border-zinc-900/40"></div>
+            <div className="w-1/12 bg-[#0c0c0c]"></div>
           </div>
-          <h1 className="text-5xl md:text-7xl font-display font-black tracking-tight text-white uppercase select-none leading-none">
-            JUVE <span className="text-stroke-white text-zinc-500">FAN PORTAL</span>
-          </h1>
-          <p className="mt-3 text-xs md:text-sm font-mono uppercase tracking-widest text-zinc-300 max-w-lg mx-auto font-bold">
-            La passione non ha fine. Esplora le statistiche dei campioni, partecipa al forum e scrivi i tuoi pensieri sul blog.
-          </p>
+
+          {/* Diagonal light effect */}
+          <div className="absolute inset-0 bg-gradient-to-tr from-black via-transparent to-black opacity-90"></div>
+          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black to-transparent"></div>
+
+          {/* Content Box */}
+          <div className="relative z-10 text-center px-4 max-w-4xl flex flex-col items-center">
+            {/* The Three Gold Stars representing Juve's 30+ official titles (and we celebrate 38!) */}
+            <div className="flex justify-center space-x-1.5 mb-4">
+              <Star className="w-5 h-5 text-yellow-500 fill-yellow-500 filter drop-shadow-[0_0_6px_rgba(234,179,8,0.6)] animate-pulse" />
+              <Star className="w-5 h-5 text-yellow-500 fill-yellow-500 filter drop-shadow-[0_0_6px_rgba(234,179,8,0.6)] animate-pulse" />
+              <Star className="w-5 h-5 text-yellow-500 fill-yellow-500 filter drop-shadow-[0_0_6px_rgba(234,179,8,0.6)] animate-pulse" />
+            </div>
+
+            {/* ITALIAN SCUDETTO 38 SHIELD BADGE */}
+            <div className="w-20 h-24 md:w-24 md:h-28 relative mb-6 rounded-b-[48px] rounded-t-[8px] overflow-hidden border-2 border-yellow-500 shadow-[0_0_30px_rgba(234,179,8,0.25)] flex select-none group hover:scale-105 transition-transform duration-300">
+              {/* Green Left stripe */}
+              <div className="w-1/3 h-full bg-[#008C45]"></div>
+              {/* White Middle stripe */}
+              <div className="w-1/3 h-full bg-[#FFFFFF]"></div>
+              {/* Red Right stripe */}
+              <div className="w-1/3 h-full bg-[#CD212A]"></div>
+              
+              {/* Absolute golden number 38 centered beautifully inside the shield */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/5">
+                <span className="font-display font-black text-4xl md:text-5xl tracking-tighter text-black drop-shadow-[0_2px_1px_rgba(255,255,255,0.95)] leading-none select-none">
+                  38
+                </span>
+                <span className="text-[7px] md:text-[8px] font-mono tracking-widest font-extrabold uppercase text-black mt-1 leading-none">
+                  SUL CAMPO
+                </span>
+              </div>
+            </div>
+
+            {/* Boniperti's Motto */}
+            <h2 className="text-xl md:text-3xl font-display font-black tracking-tight text-white uppercase max-w-2xl leading-snug drop-shadow-md">
+              "Vincere non è importante,<br />è l'unica cosa che conta"
+            </h2>
+            
+            {/* Legend author info */}
+            <p className="mt-3 text-[10px] md:text-xs font-mono uppercase tracking-widest text-zinc-400 font-bold">
+              — Giampiero Boniperti
+            </p>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Main Interactive Stage with Page Transitions */}
       <main className="flex-grow bg-black">

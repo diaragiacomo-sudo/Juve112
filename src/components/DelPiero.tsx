@@ -147,9 +147,9 @@ export default function DelPieroComponent() {
         {/* Image Display */}
         <div className="w-40 h-40 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-yellow-500 bg-zinc-900 shadow-2xl flex-shrink-0 relative group">
           <img 
-            src="https://upload.wikimedia.org/wikipedia/commons/2/23/Alessandro_Del_Piero_2008_Cannes.jpg" 
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/25th_Laureus_World_Sports_Awards_-_Alessandro_Del_Piero_-_240421_155220_%28cropped%29.jpg/800px-25th_Laureus_World_Sports_Awards_-_Alessandro_Del_Piero_-_240421_155220_%28cropped%29.jpg" 
             alt="Alessandro Del Piero" 
-            className="w-full h-full object-cover object-[center_15%] transition-transform duration-500 group-hover:scale-110"
+            className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-110"
             referrerPolicy="no-referrer"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end justify-center pb-3">

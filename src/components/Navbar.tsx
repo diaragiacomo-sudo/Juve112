@@ -43,9 +43,9 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
             <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-black bg-black flex-shrink-0 shadow-md flex items-center justify-center transition-transform group-hover:scale-105 duration-250" title="Alessandro Del Piero">
               {!delPieroImgError ? (
                 <img 
-                  src="https://upload.wikimedia.org/wikipedia/commons/2/23/Alessandro_Del_Piero_2008_Cannes.jpg" 
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/25th_Laureus_World_Sports_Awards_-_Alessandro_Del_Piero_-_240421_155220_%28cropped%29.jpg/800px-25th_Laureus_World_Sports_Awards_-_Alessandro_Del_Piero_-_240421_155220_%28cropped%29.jpg" 
                   alt="Alessandro Del Piero"
-                  className="w-full h-full object-cover object-[center_15%] scale-105"
+                  className="w-full h-full object-cover object-center scale-105"
                   referrerPolicy="no-referrer"
                   onError={() => setDelPieroImgError(true)}
                 />

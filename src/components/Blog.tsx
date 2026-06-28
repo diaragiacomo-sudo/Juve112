@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { initialArticles } from '../data';
 import { Article, Comment } from '../types';
-import { BookOpen, Plus, Heart, MessageSquare, Send, ArrowLeft, Clock, User, Filter, AlertCircle, CheckCircle } from 'lucide-react';
+import { BookOpen, Plus, Heart, MessageSquare, Send, ArrowLeft, Clock, User, Filter, AlertCircle, CheckCircle, Share2 } from 'lucide-react';
 
 export default function BlogComponent() {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -186,6 +186,30 @@ export default function BlogComponent() {
       });
     } catch (err) {
       console.error("Failed to save article:", err);
+    }
+  };
+
+  // Handle Share
+  const handleShare = async (article: Article, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const shareData = {
+      title: article.title,
+      text: article.summary,
+      url: window.location.href,
+    };
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.error("Error sharing:", err);
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(`${article.title}\n\n${article.summary}\n\n${window.location.href}`);
+        alert("Link copiato negli appunti!");
+      } catch (err) {
+        console.error("Clipboard copy failed", err);
+      }
     }
   };
 
@@ -410,19 +434,30 @@ export default function BlogComponent() {
 
                     {/* Likes & Comments counters footer */}
                     <div className="mt-6 pt-4 border-t border-zinc-800 flex items-center justify-between text-zinc-500 text-[10px] font-mono font-bold uppercase tracking-wider">
-                      <button 
-                        id={`like-btn-${article.id}`}
-                        onClick={(e) => handleLike(article.id, e)}
-                        className="flex items-center space-x-1.5 hover:text-white transition-all"
-                      >
-                        <Heart className="w-3.5 h-3.5 fill-transparent stroke-current" />
-                        <span>{article.likes}</span>
-                      </button>
+                      <div className="flex items-center space-x-4">
+                        <button 
+                          id={`like-btn-${article.id}`}
+                          onClick={(e) => handleLike(article.id, e)}
+                          className="flex items-center space-x-1.5 hover:text-white transition-all"
+                        >
+                          <Heart className="w-3.5 h-3.5 fill-transparent stroke-current" />
+                          <span>{article.likes}</span>
+                        </button>
 
-                      <span className="flex items-center space-x-1 text-zinc-400">
-                        <MessageSquare className="w-3.5 h-3.5" />
-                        <span>{article.comments.length} Commenti</span>
-                      </span>
+                        <span className="flex items-center space-x-1 text-zinc-400">
+                          <MessageSquare className="w-3.5 h-3.5" />
+                          <span>{article.comments.length}</span>
+                        </span>
+                      </div>
+                      
+                      <button 
+                        onClick={(e) => handleShare(article, e)}
+                        className="flex items-center space-x-1.5 hover:text-white transition-all"
+                        title="Condividi"
+                      >
+                        <Share2 className="w-3.5 h-3.5" />
+                        <span className="hidden sm:inline">Condividi</span>
+                      </button>
                     </div>
                   </div>
                 </article>
@@ -465,11 +500,11 @@ export default function BlogComponent() {
               </h1>
 
               {/* Author & Date metadata */}
-              <div className="flex items-center space-x-4 text-xs text-zinc-500 font-mono mt-4 pb-6 border-b border-zinc-800 uppercase font-bold tracking-wider">
+              <div className="flex flex-wrap items-center gap-4 text-xs text-zinc-500 font-mono mt-4 pb-6 border-b border-zinc-800 uppercase font-bold tracking-wider">
                 <span className="flex items-center"><User className="w-4 h-4 mr-1.5" /> {selectedArticle.author}</span>
-                <span>|</span>
+                <span className="hidden sm:inline">|</span>
                 <span className="flex items-center"><Clock className="w-4 h-4 mr-1.5" /> {selectedArticle.date}</span>
-                <span>|</span>
+                <span className="hidden sm:inline">|</span>
                 <button 
                   id={`detail-like-btn-${selectedArticle.id}`}
                   onClick={(e) => handleLike(selectedArticle.id, e)} 
@@ -477,6 +512,15 @@ export default function BlogComponent() {
                 >
                   <Heart className="w-4 h-4 fill-white/10 stroke-current" />
                   <span>{selectedArticle.likes} Cuori</span>
+                </button>
+                <span className="hidden sm:inline">|</span>
+                <button 
+                  onClick={(e) => handleShare(selectedArticle, e)} 
+                  className="flex items-center space-x-1 text-white hover:opacity-70 transition-all font-bold"
+                  title="Condividi Articolo"
+                >
+                  <Share2 className="w-4 h-4" />
+                  <span>Condividi</span>
                 </button>
               </div>
             </div>

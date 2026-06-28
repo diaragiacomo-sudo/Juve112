@@ -5,80 +5,26 @@ import { Article, Comment } from '../types';
 import { BookOpen, Plus, Heart, MessageSquare, Send, ArrowLeft, Clock, User, Filter, AlertCircle, CheckCircle } from 'lucide-react';
 
 export default function BlogComponent() {
-  const [articles, setArticles] = useState<Article[]>(() => {
-    const defaultArticles = [...initialArticles];
-    
-    // Load custom user-created articles
-    let customArticles: Article[] = [];
-    const savedCustom = localStorage.getItem('juve_custom_articles');
-    if (savedCustom) {
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch articles from the server
+  useEffect(() => {
+    const fetchArticles = async () => {
       try {
-        customArticles = JSON.parse(savedCustom);
-      } catch (e) {
-        console.error(e);
-      }
-    } else {
-      // Migrate from old juve_articles if it exists
-      const oldSaved = localStorage.getItem('juve_articles');
-      if (oldSaved) {
-        try {
-          const parsedOld = JSON.parse(oldSaved) as Article[];
-          const defaultIds = defaultArticles.map(a => a.id);
-          customArticles = parsedOld.filter(a => !defaultIds.includes(a.id));
-        } catch (e) {
-          console.error(e);
+        const response = await fetch('/api/articles');
+        if (response.ok) {
+          const data = await response.json();
+          setArticles(data);
         }
+      } catch (error) {
+        console.error("Failed to load articles:", error);
+      } finally {
+        setIsLoading(false);
       }
-    }
-    
-    // Load feedback (likes and comments) for all articles (both default and custom)
-    let feedback: { [id: string]: { likes: number; comments: Comment[] } } = {};
-    const savedFeedback = localStorage.getItem('juve_article_feedback');
-    if (savedFeedback) {
-      try {
-        feedback = JSON.parse(savedFeedback);
-      } catch (e) {
-        console.error(e);
-      }
-    } else {
-      // Migrate feedback from old juve_articles if it exists
-      const oldSaved = localStorage.getItem('juve_articles');
-      if (oldSaved) {
-        try {
-          const parsedOld = JSON.parse(oldSaved) as Article[];
-          parsedOld.forEach(art => {
-            feedback[art.id] = {
-              likes: art.likes,
-              comments: art.comments
-            };
-          });
-        } catch (e) {
-          console.error(e);
-        }
-      }
-    }
-    
-    // Merge default and custom articles
-    const combined = [...customArticles];
-    defaultArticles.forEach(defArt => {
-      if (!combined.some(c => c.id === defArt.id)) {
-        combined.push(defArt);
-      }
-    });
-    
-    // Apply saved feedback (likes, comments) to all combined articles
-    return combined.map(art => {
-      const artFeedback = feedback[art.id];
-      if (artFeedback) {
-        return {
-          ...art,
-          likes: artFeedback.likes,
-          comments: artFeedback.comments
-        };
-      }
-      return art;
-    });
-  });
+    };
+    fetchArticles();
+  }, []);
 
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>('Tutti');
@@ -99,49 +45,47 @@ export default function BlogComponent() {
   const [commentContent, setCommentContent] = useState('');
   const [commentError, setCommentError] = useState('');
 
-  // Persist articles in localStorage
+  // Keep selected article synced with state edits (e.g. comments/likes)
   useEffect(() => {
-    const defaultIds = initialArticles.map(a => a.id);
-    const custom = articles.filter(a => !defaultIds.includes(a.id));
-    localStorage.setItem('juve_custom_articles', JSON.stringify(custom));
-    
-    const feedback: { [id: string]: { likes: number; comments: Comment[] } } = {};
-    articles.forEach(art => {
-      feedback[art.id] = {
-        likes: art.likes,
-        comments: art.comments
-      };
-    });
-    localStorage.setItem('juve_article_feedback', JSON.stringify(feedback));
-    
-    // Legacy support
-    localStorage.setItem('juve_articles', JSON.stringify(articles));
-
     if (selectedArticle) {
-      // Keep selected article synced with state edits (e.g. comments/likes)
       const updated = articles.find(a => a.id === selectedArticle.id);
       if (updated) {
         setSelectedArticle(updated);
       }
     }
-  }, [articles]);
+  }, [articles, selectedArticle?.id]);
 
   // Categories list
   const categories = ['Tutti', 'Analisi Tattica', 'Focus Giocatori', 'Match Preview', 'News'];
 
   // Handle Likes
-  const handleLike = (articleId: string, e: React.MouseEvent) => {
+  const handleLike = async (articleId: string, e: React.MouseEvent) => {
     e.stopPropagation();
+    
+    // Optimistic update
     setArticles(prev => prev.map(art => {
       if (art.id === articleId) {
         return { ...art, likes: art.likes + 1 };
       }
       return art;
     }));
+
+    try {
+      await fetch(`/api/articles/${articleId}/like`, { method: 'POST' });
+    } catch (err) {
+      console.error("Failed to like article:", err);
+      // Revert if needed
+      setArticles(prev => prev.map(art => {
+        if (art.id === articleId) {
+          return { ...art, likes: Math.max(0, art.likes - 1) };
+        }
+        return art;
+      }));
+    }
   };
 
   // Add Comment
-  const handleAddComment = (e: React.FormEvent) => {
+  const handleAddComment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!commentAuthor.trim() || !commentContent.trim()) {
       setCommentError('Inserisci il nome e il commento prima di inviare.');
@@ -157,6 +101,7 @@ export default function BlogComponent() {
       content: commentContent
     };
 
+    // Optimistic update
     setArticles(prev => prev.map(art => {
       if (art.id === selectedArticle.id) {
         return {
@@ -170,10 +115,20 @@ export default function BlogComponent() {
     setCommentAuthor('');
     setCommentContent('');
     setCommentError('');
+
+    try {
+      await fetch(`/api/articles/${selectedArticle.id}/comments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newComment)
+      });
+    } catch (err) {
+      console.error("Failed to add comment:", err);
+    }
   };
 
   // Create Article
-  const handleCreateArticle = (e: React.FormEvent) => {
+  const handleCreateArticle = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle.trim() || !newSummary.trim() || !newContent.trim() || !newAuthor.trim() || !newPassword.trim()) {
       setFormError('Compila tutti i campi prima di pubblicare.');
@@ -206,6 +161,7 @@ export default function BlogComponent() {
       likes: 0
     };
 
+    // Optimistic update
     setArticles([newArticle, ...articles]);
     
     // Clear forms
@@ -221,6 +177,16 @@ export default function BlogComponent() {
     // Show Toast
     setShowSuccessToast(true);
     setTimeout(() => setShowSuccessToast(false), 4000);
+
+    try {
+      await fetch('/api/articles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newArticle)
+      });
+    } catch (err) {
+      console.error("Failed to save article:", err);
+    }
   };
 
   // Filtered Articles

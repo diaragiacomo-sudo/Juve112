@@ -6,15 +6,80 @@ import { MessageSquare, Plus, Heart, Send, ArrowLeft, Search, Filter, AlertCircl
 
 export default function ForumComponent() {
   const [threads, setThreads] = useState<ForumThread[]>(() => {
-    const saved = localStorage.getItem('juve_forum_threads');
-    if (saved) {
+    const defaultThreads = [...initialForumThreads];
+    
+    // Load custom user-created threads
+    let customThreads: ForumThread[] = [];
+    const savedCustom = localStorage.getItem('juve_custom_forum_threads');
+    if (savedCustom) {
       try {
-        return JSON.parse(saved);
+        customThreads = JSON.parse(savedCustom);
       } catch (e) {
         console.error(e);
       }
+    } else {
+      // Migrate from old juve_forum_threads if it exists
+      const oldSaved = localStorage.getItem('juve_forum_threads');
+      if (oldSaved) {
+        try {
+          const parsedOld = JSON.parse(oldSaved) as ForumThread[];
+          const defaultIds = defaultThreads.map(t => t.id);
+          customThreads = parsedOld.filter(t => !defaultIds.includes(t.id));
+        } catch (e) {
+          console.error(e);
+        }
+      }
     }
-    return initialForumThreads;
+    
+    // Load feedback (views, repliesCount, and posts) for all threads (both default and custom)
+    let feedback: { [id: string]: { views: number; repliesCount: number; posts: ForumPost[] } } = {};
+    const savedFeedback = localStorage.getItem('juve_forum_thread_feedback');
+    if (savedFeedback) {
+      try {
+        feedback = JSON.parse(savedFeedback);
+      } catch (e) {
+        console.error(e);
+      }
+    } else {
+      // Migrate feedback from old juve_forum_threads if it exists
+      const oldSaved = localStorage.getItem('juve_forum_threads');
+      if (oldSaved) {
+        try {
+          const parsedOld = JSON.parse(oldSaved) as ForumThread[];
+          parsedOld.forEach(th => {
+            feedback[th.id] = {
+              views: th.views,
+              repliesCount: th.repliesCount,
+              posts: th.posts
+            };
+          });
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    }
+    
+    // Merge default and custom threads
+    const combined = [...customThreads];
+    defaultThreads.forEach(defTh => {
+      if (!combined.some(c => c.id === defTh.id)) {
+        combined.push(defTh);
+      }
+    });
+    
+    // Apply saved feedback (views, repliesCount, posts) to all combined threads
+    return combined.map(th => {
+      const thFeedback = feedback[th.id];
+      if (thFeedback) {
+        return {
+          ...th,
+          views: thFeedback.views,
+          repliesCount: thFeedback.repliesCount,
+          posts: thFeedback.posts
+        };
+      }
+      return th;
+    });
   });
 
   const [selectedThread, setSelectedThread] = useState<ForumThread | null>(null);
@@ -36,7 +101,23 @@ export default function ForumComponent() {
 
   // Sync threads with localStorage and active selection
   useEffect(() => {
+    const defaultIds = initialForumThreads.map(t => t.id);
+    const custom = threads.filter(t => !defaultIds.includes(t.id));
+    localStorage.setItem('juve_custom_forum_threads', JSON.stringify(custom));
+    
+    const feedback: { [id: string]: { views: number; repliesCount: number; posts: ForumPost[] } } = {};
+    threads.forEach(th => {
+      feedback[th.id] = {
+        views: th.views,
+        repliesCount: th.repliesCount,
+        posts: th.posts
+      };
+    });
+    localStorage.setItem('juve_forum_thread_feedback', JSON.stringify(feedback));
+    
+    // Legacy support
     localStorage.setItem('juve_forum_threads', JSON.stringify(threads));
+
     if (selectedThread) {
       const updated = threads.find(t => t.id === selectedThread.id);
       if (updated) {
